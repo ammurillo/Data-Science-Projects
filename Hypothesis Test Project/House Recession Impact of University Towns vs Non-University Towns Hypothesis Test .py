@@ -9,7 +9,7 @@
 # bottom.
 
 
-# In[1]:
+# In[ ]:
 
 
 import pandas as pd
@@ -18,10 +18,13 @@ from scipy.stats import ttest_ind
 from scipy import stats
 
 
-# In[2]:
+# In[ ]:
 
 
-def get_list_of_university_towns():
+def university_towns_data():
+    
+    
+    
     
     # import data
     df = pd.read_table('university_towns.txt',header=None)
@@ -53,10 +56,10 @@ def get_list_of_university_towns():
     return tempDF
 
 
-# In[3]:
+# In[ ]:
 
 
-def get_recession_start():
+def recession():
 
     # Import Data.  
     df = pd.read_excel('gdplev.xls',skiprows=7)
@@ -149,10 +152,10 @@ def get_recession_start():
     return recession_start,before_recession,recession_end,recession_bottom
 
 
-# In[4]:
+# In[ ]:
 
 
-def convert_housing_data_to_quarters():
+def housing_data_quarters():
     
     # import dataSet
     df = pd.read_csv('City_Zhvi_AllHomes.csv')
@@ -250,18 +253,18 @@ def convert_housing_data_to_quarters():
     return mdf
 
 
-# In[5]:
+# In[ ]:
 
 
 
-def run_ttest():
+def ttest():
 
     # Imported data from previously created functions that cleaned and formatted the dataset.
 
     # rs -> recession start, br -> before recession, re -> recession end, rbb -> recession bottom
-    rs,br,re,rb = get_recession_start() 
-    ut = get_list_of_university_towns()
-    house_df = convert_housing_data_to_quarters()
+    rs,br,re,rb = recession() 
+    ut = university_towns_data()
+    house_df = housing_data_quarters()
 
     # Filtering the housing dataset to include the quarter before the recession began and the recession bottom.
     house_df = house_df[[br,rb]]
@@ -300,6 +303,12 @@ def run_ttest():
 
 
     return (different, pvalue, better)
+
+
+# In[ ]:
+
+
+ttest()
 
 
 # In[ ]:
