@@ -1,15 +1,10 @@
 
 # coding: utf-8
 
-# In[ ]:
+# ### Hypothesis:
+# University towns have their mean housing prices less effected by recessions. Run a t-test to compare the ratio of the mean price of houses in university towns the quarter before the recession starts compared to the recession bottom.
 
-
-# Hypothesis: University towns have their mean housing prices less effected by recessions. Run a t-test to compare the 
-# ratio of the mean price of houses in university towns the quarter before the recession starts compared to the recession
-# bottom.
-
-
-# In[ ]:
+# In[1]:
 
 
 import pandas as pd
@@ -18,13 +13,12 @@ from scipy.stats import ttest_ind
 from scipy import stats
 
 
-# In[ ]:
+# ### Create a function that will import the data and will clean it from inconsistencies and unnecessary punctuation.
+
+# In[2]:
 
 
-def university_towns_data():
-    
-    
-    
+def get_list_of_university_towns():
     
     # import data
     df = pd.read_table('university_towns.txt',header=None)
@@ -56,10 +50,17 @@ def university_towns_data():
     return tempDF
 
 
-# In[ ]:
+# ### Import GDP data and evaluate each quarter to identify the following 4 features:
+
+# (1) Start of recession 
+# (2) Before the recession started
+# (3) End of recession
+# (4) The bottom of the recession
+
+# In[3]:
 
 
-def recession():
+def get_recession_start():
 
     # Import Data.  
     df = pd.read_excel('gdplev.xls',skiprows=7)
@@ -152,10 +153,12 @@ def recession():
     return recession_start,before_recession,recession_end,recession_bottom
 
 
-# In[ ]:
+# ### Import Housing data and perform data wrangling
+
+# In[4]:
 
 
-def housing_data_quarters():
+def convert_housing_data_to_quarters():
     
     # import dataSet
     df = pd.read_csv('City_Zhvi_AllHomes.csv')
@@ -253,18 +256,20 @@ def housing_data_quarters():
     return mdf
 
 
-# In[ ]:
+# ### Conduct T-Test to determine whether we reject or fail to reject the null hypothesis.
+
+# In[5]:
 
 
 
-def ttest():
+def run_ttest():
 
     # Imported data from previously created functions that cleaned and formatted the dataset.
 
     # rs -> recession start, br -> before recession, re -> recession end, rbb -> recession bottom
-    rs,br,re,rb = recession() 
-    ut = university_towns_data()
-    house_df = housing_data_quarters()
+    rs,br,re,rb = get_recession_start() 
+    ut = get_list_of_university_towns()
+    house_df = convert_housing_data_to_quarters()
 
     # Filtering the housing dataset to include the quarter before the recession began and the recession bottom.
     house_df = house_df[[br,rb]]
@@ -305,10 +310,10 @@ def ttest():
     return (different, pvalue, better)
 
 
-# In[ ]:
+# In[6]:
 
 
-ttest()
+run_ttest()
 
 
 # In[ ]:
