@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 get_ipython().run_line_magic('matplotlib', 'inline')
+from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor
 
 
 # ### Import Data
@@ -125,7 +126,6 @@ final_data.head()
 # In[13]:
 
 
-
 x = final_data.columns
 for element in x:
     for element2 in final_data[element]:
@@ -133,11 +133,17 @@ for element in x:
             print('There is a string value')
 
 
+# In[14]:
+
+
+final_data.head()
+
+
 # ### Linear Regression Model
 
 # Determine dependent and independent variables.
 
-# In[14]:
+# In[15]:
 
 
 # "final_data[:1460]" is the training data.
@@ -148,27 +154,27 @@ y = train['SalePrice']
 
 # Train - Test Split your data.
 
-# In[15]:
+# In[16]:
 
 
 from sklearn.model_selection import train_test_split
 
 
-# In[16]:
+# In[17]:
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y)
+X_train, X_test, y_train, y_test = train_test_split(X, y,random_state=9)
 
 
 # Instantiate your LR model.
 
-# In[17]:
+# In[18]:
 
 
 from sklearn.linear_model import LinearRegression
 
 
-# In[18]:
+# In[19]:
 
 
 LR = LinearRegression()
@@ -176,7 +182,7 @@ LR = LinearRegression()
 
 # Fit your model to training data.
 
-# In[19]:
+# In[20]:
 
 
 LR.fit(X_train,y_train)
@@ -184,7 +190,7 @@ LR.fit(X_train,y_train)
 
 # Predict using testing data.
 
-# In[20]:
+# In[21]:
 
 
 y_pred = LR.predict(X_test)
@@ -192,20 +198,20 @@ y_pred = LR.predict(X_test)
 
 # Evaluate your model and Accuracy
 
-# In[21]:
+# In[22]:
 
 
 from sklearn import metrics
 np.sqrt(metrics.mean_squared_error(y_test, y_pred))
 
 
-# In[22]:
+# In[23]:
 
 
 print(LR.score(X_test, y_test)*100,'% Prediction Accuracy')
 
 
-# In[23]:
+# In[24]:
 
 
 plt.scatter(y_test, y_pred)
@@ -213,21 +219,18 @@ plt.scatter(y_test, y_pred)
 
 # Identifying 5 most influential features when determining a house valuation.
 
-# In[24]:
+# In[25]:
 
 
 cdf = pd.DataFrame(LR.coef_,X.columns,columns=['Coefficient'])
 cdf['Coefficient'].sort_values(ascending=False).head()
 
 
-# If we held all other feature fixed, a 1 unit increase in either 'GrLivArea' will result in an increase of
-# 2.8e+13.
-
 # ### Evaluating Residuals
 
 # The residual follows a normal distribution pattern.
 
-# In[25]:
+# In[26]:
 
 
 sns.distplot((y_test-y_pred),bins=60)
@@ -237,7 +240,7 @@ sns.distplot((y_test-y_pred),bins=60)
 
 # Using the testing data, final_data[1460:] , we will now predict the housing valuation.
 
-# In[26]:
+# In[27]:
 
 
 y_pred = LR.predict(final_data[1460:])
@@ -245,11 +248,86 @@ y_pred = LR.predict(final_data[1460:])
 groundfloor = final_data['GrLivArea'][1460:]
 
 
-# In[27]:
+# In[28]:
 
 
 plt.scatter(groundfloor, y_pred,marker='x')
 plt.title('House Valuation Prediction')
 plt.xlabel('Ground Living Area')
 plt.ylabel('Predicted Price')
+
+
+# ### Improve Model, Boost Aggregation & Boosting
+
+# ### Bootstrap Aggregating (Bagging)
+
+# In[29]:
+
+
+# Instantiate model
+bg = BaggingRegressor()
+
+# Fit model to training data
+bg.fit(X_train,y_train)
+
+# Use model to create predictions
+y_pred2 = bg.predict(X_test)
+
+
+# In[30]:
+
+
+print(bg.score(X_test, y_test)*100,'% Prediction Accuracy')
+
+
+# In[31]:
+
+
+print('Bootstrap Aggregating increased the model accuracy by:', (bg.score(X_test, y_test) - LR.score(X_test, y_test))*100)
+
+
+# In[32]:
+
+
+sns.distplot((y_test-y_pred2),bins=60)
+
+
+# In[33]:
+
+
+plt.scatter(y_test, y_pred2)
+
+
+# ### Adaboost
+
+# In[34]:
+
+
+adb = AdaBoostRegressor()
+adb.fit(X_train,y_train)
+y_pred3 = adb.predict(X_test)
+
+
+# In[35]:
+
+
+print(adb.score(X_test, y_test)*100,'% Prediction Accuracy')
+
+
+# In[36]:
+
+
+print('Adaboost increased the model accuracy by:', (adb.score(X_test, y_test) - LR.score(X_test, y_test))*100)
+
+
+# In[37]:
+
+
+sns.distplot((y_test-y_pred3),bins=60)
+
+
+# In[38]:
+
+
+plt.scatter(y_test, y_pred3)
 
