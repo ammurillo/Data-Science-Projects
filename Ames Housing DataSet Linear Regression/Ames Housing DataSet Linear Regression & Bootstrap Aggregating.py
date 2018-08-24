@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 get_ipython().run_line_magic('matplotlib', 'inline')
 from sklearn.ensemble import AdaBoostRegressor, BaggingRegressor
+from sklearn.metrics import mean_squared_error, r2_score
 
 
 # ### Import Data
@@ -163,7 +164,7 @@ from sklearn.model_selection import train_test_split
 # In[17]:
 
 
-X_train, X_test, y_train, y_test = train_test_split(X, y,random_state=9)
+X_train, X_test, y_train, y_test = train_test_split(X, y,random_state=93)
 
 
 # Instantiate your LR model.
@@ -280,19 +281,19 @@ y_pred2 = bg.predict(X_test)
 print(bg.score(X_test, y_test)*100,'% Prediction Accuracy')
 
 
-# In[31]:
+# In[32]:
 
 
 print('Bootstrap Aggregating increased the model accuracy by:', (bg.score(X_test, y_test) - LR.score(X_test, y_test))*100)
 
 
-# In[32]:
+# In[33]:
 
 
 sns.distplot((y_test-y_pred2),bins=60)
 
 
-# In[33]:
+# In[34]:
 
 
 plt.scatter(y_test, y_pred2)
@@ -300,7 +301,7 @@ plt.scatter(y_test, y_pred2)
 
 # ### Adaboost
 
-# In[34]:
+# In[35]:
 
 
 adb = AdaBoostRegressor()
@@ -308,25 +309,25 @@ adb.fit(X_train,y_train)
 y_pred3 = adb.predict(X_test)
 
 
-# In[35]:
+# In[36]:
 
 
 print(adb.score(X_test, y_test)*100,'% Prediction Accuracy')
 
 
-# In[36]:
+# In[37]:
 
 
 print('Adaboost increased the model accuracy by:', (adb.score(X_test, y_test) - LR.score(X_test, y_test))*100)
 
 
-# In[37]:
+# In[38]:
 
 
 sns.distplot((y_test-y_pred3),bins=60)
 
 
-# In[38]:
+# In[39]:
 
 
 plt.scatter(y_test, y_pred3)
